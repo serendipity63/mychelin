@@ -1,0 +1,45 @@
+@charset "UTF-8";
+
+h3, h5 {
+	text-align: center;
+}
+
+table {
+	margin: auto;
+	width: 800px;
+	border-collapse: collapse;
+}
+
+#searchform{
+	margin-top:140px;
+}
+
+#tr_top {
+	background: lightblue;
+	text-align: center;
+}
+
+#tr_bottom {
+	text-align: center;
+}
+
+#emptyArea {
+	margin: auto;
+	width: 800px;
+	text-align: center;
+}
+
+#emptyArea a {
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	text-decoration: none;
+}
+
+#emptyArea .btn {
+	background: lightgray;
+}
+
+#emptyArea .select {
+	background: lightblue;
+}

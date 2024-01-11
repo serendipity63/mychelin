@@ -1,0 +1,10 @@
+@charset "UTF-8";
+#header {
+	height: 110px;
+	display: flex;
+}
+
+a, b {
+	display: inline-block;
+	line-height: 110px;
+}

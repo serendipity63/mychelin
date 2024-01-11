@@ -1,0 +1,10 @@
+@charset "UTF-8";
+
+body {
+	font-family: 'Noto Sans KR', sans-serif;
+	/* Noto Sans KR 폰트를 body에 적용 */
+}
+
+.bold-heading {
+	font-weight: bold;
+}

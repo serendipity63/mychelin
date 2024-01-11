@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+    <fullyQualifiedTypeName name="java.sql.Date"/>
+    <fullyQualifiedTypeName name="com.nearby.myapp.dto.Member"/>
+    <fullyQualifiedTypeName name="com.my.board.dto.Member"/>
+</qualifiedTypeNameHistroy>
