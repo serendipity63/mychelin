@@ -1,0 +1,6 @@
+package com.my.board.dao;
+
+public interface ReplyDao {
+	void insertReply(Reply reply) throws Exception;
+	
+}

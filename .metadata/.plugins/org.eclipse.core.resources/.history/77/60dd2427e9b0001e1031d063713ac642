@@ -1,0 +1,32 @@
+package com.my.board.dao;
+
+import java.util.List;
+
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.my.board.dto.Reply;
+
+public class ReplyDaoImpl implements ReplyDao {
+	@Autowired
+	private SqlSessionTemplate sqlSession;
+
+	@Override
+	public void insertReply(Reply reply) throws Exception {
+		sqlSession.insert("mapper.reply.insertReply", reply);
+		
+	}
+
+	@Override
+	public List<Reply> selectReplyList(Integer row) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Reply selectReply(Integer boardNum) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

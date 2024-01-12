@@ -25,3 +25,7 @@
 1704933536946	Copy file
 1704934229599	Rename resource 'modify.jsp'
 1704934237923	Rename resource 'update.jsp'
+1705018940647	Rename type 'Comment'
+1705022301831	Encapsulate field 'writer'
+1705022342769	Encapsulate field 'boardNum'
+1705023339109	Encapsulate field 'renum'

@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.my.board.dto.Board;
+import com.my.board.dto.Reply;
 import com.my.board.dto.Member;
 import com.my.board.dto.PageInfo;
 import com.my.board.service.BoardService;
@@ -78,7 +80,39 @@ public class BoardController {
 		return mav;
 	}
 
-	// view/image?filename=1 대신 view/image/1으로 가져올 수 있음
+	@RequestMapping(value = "/reply", method = RequestMethod.POST)
+	public ModelAndView boardReply(@ModelAttribute Reply reply, @RequestParam("file") MultipartFile file
+			, @RequestParam("page") Integer page) {
+		ModelAndView mav = new ModelAndView();
+		try {
+			Reply writereply = boardService.writeReply(reply, file);
+			mav.addObject("writereply", writereply);
+			/* mav.setViewName("detailform"); */
+	        mav.setViewName("redirect:/boarddetail/" + reply.getNum() + "/" + page);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			mav.addObject("err", "댓글 등록 오류");
+			mav.setViewName("error");
+		}
+		return mav;
+	}
+
+	@RequestMapping(value = "/boardmodify", method = RequestMethod.POST)
+	public ModelAndView boardModify(@ModelAttribute Board board, @RequestParam("file") MultipartFile file,
+			@RequestParam("page") Integer page) {
+		ModelAndView mav = new ModelAndView();
+		try {
+			Board mBoard = boardService.modifyBoard(board, file);
+			mav.setViewName("redirect:/boarddetail/" + board.getNum() + "/" + page); // 수정 후 상세 후 리스트 유지
+		} catch (Exception e) {
+			e.printStackTrace();
+			mav.addObject("err", "글 수정 오류");
+			mav.setViewName("error");
+		}
+		return mav;
+	}
+
 	@RequestMapping(value = "/image/{num}")
 	@ResponseBody
 	public void imageView(@PathVariable Integer num, HttpServletResponse response) {
@@ -94,7 +128,9 @@ public class BoardController {
 		ModelAndView mav = new ModelAndView();
 		try {
 			Board board = boardService.boardDetail(num);
+			List<Reply> replyList = boardService.replyListByPage(num);
 			mav.addObject("board", board);
+			mav.addObject("replyList", replyList);
 			mav.addObject("page", page);
 			Member user = (Member) session.getAttribute("user");
 			if (user != null) {
@@ -121,21 +157,6 @@ public class BoardController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			mav.addObject("err", "글 상세 조회 오류");
-			mav.setViewName("error");
-		}
-		return mav;
-	}
-
-	@RequestMapping(value = "/boardmodify", method = RequestMethod.POST)
-	public ModelAndView boardModify(@ModelAttribute Board board, @RequestParam("file") MultipartFile file,
-			@RequestParam("page") Integer page) {
-		ModelAndView mav = new ModelAndView();
-		try {
-			Board mBoard = boardService.modifyBoard(board, file);
-			mav.setViewName("redirect:/boarddetail/" + board.getNum() + "/" + page); // 수정 후 상세 후 리스트 유지
-		} catch (Exception e) {
-			e.printStackTrace();
-			mav.addObject("err", "글 수정 오류");
 			mav.setViewName("error");
 		}
 		return mav;

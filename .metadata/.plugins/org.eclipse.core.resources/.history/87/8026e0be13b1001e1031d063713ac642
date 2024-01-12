@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.reply">
+	<!-- <select id="selectreplyList" parameterType="Integer" resultType="Reply"> 
+		<![CDATA[ select * from reply where num = #{num} order by renum desc limit 
+		#{row},10 ]]> </select> -->
+
+	<insert id="insertReply" parameterType="Reply"
+		useGeneratedKeys="true" keyProperty="renum">
+	
+	<![CDATA[
+	insert into reply (content,num,writedate, fileurl, writer) 
+	values (#{content},#{num},curdate(),#{fileurl},#{writer})
+	]]>
+	</insert>
+
+
+	<select id="selectReplyCount" resultType="Integer">
+		<![CDATA[
+			select count(*) from reply
+		]]>
+
+	</select>
+	<select id="selectReply" parameterType="Integer"
+		resultType="Reply">
+		<![CDATA[
+			select * from reply where num=#{num}
+		]]>
+
+	</select>
+	<select id="selectreplyList" parameterType="Integer"
+		resultType="Reply">
+		<![CDATA[
+			select * from reply where num=#{num}
+		]]>
+
+	</select>
+
+	<!-- <delete id="deleteBoardLike" parameterType="hashmap"> <![CDATA[ delete 
+		from boardlike where member_id=#{id} and board_num=#{num} ]]> </delete> -->
+</mapper>

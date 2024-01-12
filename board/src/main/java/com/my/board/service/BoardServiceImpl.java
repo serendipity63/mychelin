@@ -9,19 +9,24 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.my.board.dao.BoardDao;
+import com.my.board.dao.ReplyDao;
 import com.my.board.dto.Board;
 import com.my.board.dto.FileVo;
 import com.my.board.dto.PageInfo;
+import com.my.board.dto.Reply;
 
 @Service
 public class BoardServiceImpl implements BoardService {
 
 	@Autowired
 	private BoardDao boardDao;
+	@Autowired
+	private ReplyDao replyDao;
 
 	@Override
 	public List<Board> boardListByPage(PageInfo pageInfo) throws Exception {
@@ -63,12 +68,11 @@ public class BoardServiceImpl implements BoardService {
 		param.put("row", row - 1);
 		return boardDao.searchBoardList(param);
 	}
-	// 어디로 넘겨주는거지?
 
 	@Override
 	public Board writeBoard(Board board, MultipartFile file) throws Exception {
 		if (file != null && !file.isEmpty()) { // 앞에서 false이면 뒤까지 가지도 않음 그래서 null 먼저 해야함
-			String dir = "c:/jisu/upload/";
+			String dir = "c:/jisu/uploadfiles/";
 			FileVo fileVo = new FileVo();
 			fileVo.setDirectory(dir);
 			fileVo.setName(file.getOriginalFilename());
@@ -84,6 +88,32 @@ public class BoardServiceImpl implements BoardService {
 		}
 		boardDao.insertBoard(board);
 		return boardDao.selectBoard(board.getNum());
+	}
+
+	@Override
+	public Reply writeReply(Reply reply, MultipartFile file) throws Exception {
+		if (file != null && !file.isEmpty()) { // 앞에서 false이면 뒤까지 가지도 않음 그래서 null 먼저 해야함
+			String dir = "c:/jisu/uploadfiles/";
+			FileVo fileVo = new FileVo();
+			fileVo.setDirectory(dir);
+			fileVo.setName(file.getOriginalFilename());
+			fileVo.setSize(file.getSize());
+			fileVo.setContenttype(file.getContentType());
+			fileVo.setData(file.getBytes());
+			boardDao.insertFile(fileVo);
+			Integer num = fileVo.getNum();
+			File uploadFile = new File(dir + num);
+			file.transferTo(uploadFile); // 이 2줄이 파일업로드
+			reply.setFileurl(num + "");
+		}
+		Integer num = reply.getNum();
+		replyDao.insertReply(reply); // 댓글 저장;
+		List<Reply> replyList = replyDao.selectReplyList(num);
+	    if (!replyList.isEmpty()) {
+	        return replyList.get(replyList.size() - 1);
+	    } else {
+	        return null;
+	    }
 	}
 
 	@Override
@@ -107,10 +137,24 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
+	public List<Reply> replyListByPage(Integer num) throws Exception {
+	    List<Reply> replyList = replyDao.selectReplyList(num);
+	    
+	    // 추가: replyList가 비어있는지, 목록이 정상적으로 로드되었는지 확인하는 로그
+	    if (replyList.isEmpty()) {
+	        System.out.println("No replies found for board with num: " + num);
+	    } else {
+	        System.out.println("Replies found for board with num " + num + ": " + replyList.size() + " replies");
+	    }
+
+	    return replyList;
+	}
+
+	@Override
 	public Board modifyBoard(Board board, MultipartFile file) throws Exception {
 		if (file != null && !file.isEmpty()) { // file이 null 이 아니고 file이 empty가 아니면
 			// 1. 파일정보 DB에 추가
-			String dir = "c:/jisu/upload/"; // 파일 업로드 처리
+			String dir = "c:/jisu/uploadfiles/"; // 파일 업로드 처리
 			FileVo fileVo = new FileVo();
 			fileVo.setDirectory(dir);
 			fileVo.setName(file.getOriginalFilename());

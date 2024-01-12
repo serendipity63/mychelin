@@ -59,8 +59,10 @@
 							aria-expanded="false">회원관리 <span class="caret"></span>
 						</a>
 							<ul class="dropdown-menu">
+								<li><a href="logout">마이페이지</a></li>
 								<li><a href="logout">로그아웃</a></li>
-							</ul></li>
+							</ul>
+							</li>
 					</ul>
 				</c:otherwise>
 			</c:choose>

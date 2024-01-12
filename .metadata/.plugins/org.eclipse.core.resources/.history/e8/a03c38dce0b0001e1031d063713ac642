@@ -1,0 +1,5 @@
+package com.my.board.dto;
+
+public class Reply {
+
+}

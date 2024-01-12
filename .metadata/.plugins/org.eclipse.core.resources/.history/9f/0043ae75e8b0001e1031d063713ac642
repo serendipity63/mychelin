@@ -1,0 +1,52 @@
+package com.my.board.dto;
+
+import java.sql.Date;
+
+public class Reply {
+	private Integer num;
+	private String content;
+	private Date writedate;
+	private String fileurl;
+	private String writer;
+
+	public Integer getNum() {
+		return num;
+	}
+
+	public void setNum(Integer num) {
+		this.num = num;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public Date getWritedate() {
+		return writedate;
+	}
+
+	public void setWritedate(Date writedate) {
+		this.writedate = writedate;
+	}
+
+	public String getFileurl() {
+		return fileurl;
+	}
+
+	public void setFileurl(String fileurl) {
+		this.fileurl = fileurl;
+	}
+
+	public String getMemberId() {
+		return memberId;
+	}
+
+	public void setMemberId(String memberId) {
+		this.memberId = memberId;
+	}
+
+}

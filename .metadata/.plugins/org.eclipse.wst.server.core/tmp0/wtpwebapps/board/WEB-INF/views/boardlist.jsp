@@ -9,18 +9,22 @@
 <meta charset="UTF-8">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width" , initial-scale="1">
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 <link rel="stylesheet" type="text/css"
 	href="${contextPath}/resources/static/css/custom.css">
 <link rel="stylesheet" type="text/css"
-	href="resources/static/css/bootstrap.css">
-<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-<script src="resources/static/js/bootstrap.js"></script>
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <title>JSP 게시판 사이트</title>
 <style type="text/css">
 a, a:hover {
-color:#000000;
-text-decoration:none;
-}</style>
+	color: #000000;
+	text-decoration: none;
+}
+</style>
 </head>
 <body>
 	<nav class="navbar navbar-default">
@@ -37,7 +41,7 @@ text-decoration:none;
 			id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
 				<li><a href="${contextPath}/main">메인</a></li>
-<li class="active"><a href="${contextPath}/boardlist">게시판</a></li>
+				<li class="active"><a href="${contextPath}/boardlist">게시판</a></li>
 			</ul>
 			<c:choose>
 
@@ -70,7 +74,14 @@ text-decoration:none;
 			</c:choose>
 		</div>
 	</nav>
+
+
 	<div class="container">
+		<c:if test="${user ne Empty }">
+			<a href="${contextPath }/boardwrite"
+				class="btn btn-primary pull-right">글쓰기</a>
+		</c:if>
+		<br /> <br />
 		<table class="table table-striped"
 			style="text-align: center; border: 1px solid #dddddd">
 			<thead>
@@ -100,46 +111,61 @@ text-decoration:none;
 				</c:forEach>
 			</tbody>
 		</table>
-		<c:choose>
-			<c:when test="${pageInfo.curPage>1 }">
-				<a href="${contextPath }/boardlist?page=${pageInfo.curPage-1 }"
-					onclick="return callBtn(${pageInfo.curPage-1 });">&lt;</a>
-			</c:when>
-			<c:otherwise>
-	 		&lt;
-	 	</c:otherwise>
-		</c:choose>
+		<nav aria-label="Page navigation" style="text-align: center;">
+			<ul class="pagination pagination-sm" style="display: inline-block;">
+				<c:choose>
+					<c:when test="${pageInfo.curPage > 1}">
+						<li><a
+							href="${contextPath}/boardlist?page=${pageInfo.curPage-1}"
+							onclick="return callBtn(${pageInfo.curPage-1});"
+							aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
+						</a></li>
+					</c:when>
+					<c:otherwise>
+						<li class="disabled"><span aria-hidden="true">&laquo;</span>
+						</li>
+					</c:otherwise>
+				</c:choose>
 
-		<c:forEach begin="${pageInfo.startPage }" end="${pageInfo.endPage }"
-			var="i">
-			<c:choose>
-				<c:when test="${pageInfo.curPage==i }">
-					<a href="${contextPath }/boardlist?page=${i}" class="select"
-						onclick="return callBtn(${i});">${i}</a>
-				</c:when>
-				<c:otherwise>
-					<a href="${contextPath }/boardlist?page=${i}" class="btn"
-						onclick="return callBtn(${i});">${i}</a>
-				</c:otherwise>
-			</c:choose>
+				<c:forEach begin="${pageInfo.startPage}" end="${pageInfo.endPage}"
+					var="i">
+					<li class="${pageInfo.curPage == i ? 'active' : ''}"><a
+						href="${contextPath}/boardlist?page=${i}"
+						onclick="return callBtn(${i});">${i}</a></li>
+				</c:forEach>
 
-		</c:forEach>
-
-		<c:choose>
-			<c:when test="${pageInfo.curPage<pageInfo.allPage}">
-				<a href="${contextPath }/boardlist?page=${pageInfo.curPage+1 }"
-					onclick="return callBtn(${pageInfo.curPage+1});">&gt;</a>
-			</c:when>
-			<c:otherwise>
-				&gt;
-			</c:otherwise>
-		</c:choose>
-		
-		<c:if test="${user ne Empty }">
-			<!--로그인 안하면 글쓰기 안보이게  ne= not equal -->
-			<a href="${contextPath }/boardwrite"
-				class="btn btn-primary pull-right">글쓰기</a>
-		</c:if>
+				<c:choose>
+					<c:when test="${pageInfo.curPage < pageInfo.allPage}">
+						<li><a
+							href="${contextPath}/boardlist?page=${pageInfo.curPage+1}"
+							onclick="return callBtn(${pageInfo.curPage+1});"
+							aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+						</a></li>
+					</c:when>
+					<c:otherwise>
+						<li class="disabled"><span aria-hidden="true">&raquo;</span>
+						</li>
+					</c:otherwise>
+				</c:choose>
+			</ul>
+		</nav>
+<div class="container">
+    <form class="form-inline" action="boardsearch" method="post" id="searchform" style="text-align: center;">
+        <input type="hidden" name="page" id="page" value="1">
+        <div class="form-group">
+            <select class="form-control" name="type">
+                <option value="all">선택</option>
+                <option value="subject" ${type eq 'subject'? 'selected':''}>제목</option>
+                <option value="writer" ${type eq 'writer'? 'selected':''}>작성자</option>
+                <option value="content" ${type eq 'content'? 'selected':''}>내용</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <input type="text" class="form-control" name="keyword" id="keyword" value="${keyword }">
+        </div>
+        <button type="submit" class="btn btn-primary">검색</button>
+    </form>
+</div>
 
 	</div>
 

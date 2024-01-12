@@ -1,0 +1,12 @@
+package com.my.board.dto;
+
+import java.sql.Date;
+
+public class Reply {
+	private Integer num;
+	private String content;
+	private Date writedate;
+	private String fileurl;
+	private String id;
+
+}

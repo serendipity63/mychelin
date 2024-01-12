@@ -8,9 +8,12 @@
 <meta charset="UTF-8">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width" , initial-scale="1">
-<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <link rel="stylesheet" type="text/css"
 	href="${contextPath}/resources/static/css/bootstrap.css">
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
@@ -56,6 +59,17 @@
 						})
 	})
 </script>
+<script>
+	window.onload = function(){
+		const fileDom= document.querySelector('#file');
+		const imageBox= document.querySelector('#image-box');
+		
+		fileDom.addEventListener('change',()=> {
+			const imageSrc= URL.createObjectURL(fileDom.files[0]);
+			imageBox.src= imageSrc;
+		})
+	}
+</script>
 </head>
 <body>
 	<nav class="navbar navbar-default">
@@ -66,13 +80,13 @@
 				<span class="icon-bar"></span> <span class="icon-bar"></span> <span
 					class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="${contextPath}/main">JSP 게시판 웹사이트</a>
+			<a class="navbar-brand" href="${contextPath}/main">마 이 슐 랭</a>
 		</div>
 		<div class="collapse navbar-collapse"
 			id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
 				<li><a href="${contextPath}/main">메인</a></li>
-<li class="active"><a href="${contextPath}/boardlist">게시판</a></li>
+				<li class="active"><a href="${contextPath}/boardlist">게시판</a></li>
 			</ul>
 			<c:choose>
 
@@ -85,8 +99,8 @@
 							aria-expanded="false">접속하기 <span class="caret"></span>
 						</a>
 							<ul class="dropdown-menu">
-								<li><a href="login">로그인</a></li>
-								<li><a href="join">회원가입</a></li>
+								<li><a href="${contextPath }/login">로그인</a></li>
+								<li><a href="${contextPath }/join">회원가입</a></li>
 							</ul></li>
 					</ul>
 
@@ -122,17 +136,17 @@
 					<tr>
 
 						<td style="width: 20%;">글 제목</td>
-						<td colspan="2">${board.subject }</td>
+						<td colspan="2" style="text-align: left;">${board.subject }</td>
 					</tr>
 					<tr>
 
 						<td>작성자</td>
-						<td colspan="2">${board.writer }</td>
+						<td colspan="2" style="text-align: left;">${board.writer }</td>
 					</tr>
 					<tr>
 
 						<td>작성일자</td>
-						<td colspan="2">${board.writedate }</td>
+						<td colspan="2" style="text-align: left;">${board.writedate }</td>
 					</tr>
 					<tr>
 						<td>내용</td>
@@ -146,9 +160,7 @@
 									<img src="${contextPath }/image/${board.fileurl}" width="100px"
 										height="100px" />
 								</c:when>
-								<c:otherwise>
-									<img src="${contextPath }/resources/img/basic.png" />
-								</c:otherwise>
+
 							</c:choose></td>
 
 					</tr>
@@ -163,10 +175,10 @@
 			<c:if test="${user ne Empty }">
 				<c:choose>
 					<c:when test="${select==true }">
- 						<img id="heart" src="${contextPath }/resources/img/like.png"
-							width="20px" height="20px" /> 
-							
-							
+						<img id="heart" src="${contextPath }/resources/img/like.png"
+							width="20px" height="20px" />
+
+
 					</c:when>
 					<c:otherwise>
 						<img id="heart" src="${contextPath }/resources/img/unlike.png"
@@ -177,6 +189,121 @@
 
 		</div>
 
+	</div>
+	<hr />
+
+
+	<div class="container">
+		<table class="table table-striped"
+			style="text-align: center; border: 1px solid #dddddd">
+			<thead>
+				<c:forEach var="reply" items="${replyList}">
+					<tr>
+						<td colspan="2" style="text-align: left;"><strong>${reply.writer}</strong>
+							- ${reply.writedate}</td>
+					</tr>
+					<tr>
+						<!-- 댓글 내용 -->
+						<td colspan="2" style="min-height: 200px; text-align: left;">
+							${reply.content}</td>
+					</tr>
+					<tr>
+						<!-- 이미지 표시 -->
+						<td colspan="2" style="min-height: 200px; text-align: left;">
+							<c:choose>
+								<c:when test="${reply.fileurl ne null}">
+									<img src="${contextPath}/image/${reply.fileurl}" width="100px"
+										height="100px" />
+								</c:when>
+							</c:choose>
+						</td>
+
+					</tr>
+				</c:forEach>
+			</thead>
+			<%-- 		<tbody>
+				<c:forEach items="${boardList}" var="board">
+					<tr id="tr_bottom">
+						<td><a
+							href="${contextPath}/boarddetail/${board.num}/${pageInfo.curPage}">${board.subject}</a></td>
+						<td>${board.writer}</td>
+						<td>${board.writedate}</td>
+						<td><c:if test="${user.id == reply.writer}">
+								<a
+									href="${contextPath}/boarddelete/${board.num}/${pageInfo.curPage}">삭제</a>
+							</c:if></td>
+					</tr>
+				</c:forEach>
+			</tbody> --%>
+		</table>
+		<nav aria-label="Page navigation" style="text-align: center;">
+			<ul class="pagination pagination-sm" style="display: inline-block;">
+				<c:choose>
+					<c:when test="${pageInfo.curPage > 1}">
+						<li><a
+							href="${contextPath}/boardlist?page=${pageInfo.curPage-1}"
+							onclick="return callBtn(${pageInfo.curPage-1});"
+							aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
+						</a></li>
+					</c:when>
+					<c:otherwise>
+						<li class="disabled"><span aria-hidden="true">&laquo;</span>
+						</li>
+					</c:otherwise>
+				</c:choose>
+
+				<c:forEach begin="${pageInfo.startPage}" end="${pageInfo.endPage}"
+					var="i">
+					<li class="${pageInfo.curPage == i ? 'active' : ''}"><a
+						href="${contextPath}/boardlist?page=${i}"
+						onclick="return callBtn(${i});">${i}</a></li>
+				</c:forEach>
+
+				<c:choose>
+					<c:when test="${pageInfo.curPage < pageInfo.allPage}">
+						<li><a
+							href="${contextPath}/boardlist?page=${pageInfo.curPage+1}"
+							onclick="return callBtn(${pageInfo.curPage+1});"
+							aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+						</a></li>
+					</c:when>
+					<c:otherwise>
+						<li class="disabled"><span aria-hidden="true">&raquo;</span>
+						</li>
+					</c:otherwise>
+				</c:choose>
+			</ul>
+		</nav>
+	</div>
+
+
+	<div class="container">
+		<div class="form-group">
+			<form method="post" enctype="multipart/form-data"
+				action="${contextPath }/reply" name="replyform">
+				<input type="hidden" name="writer" value="${user.id }" /> <input
+					type="hidden" name="num" value="${board.num}" /> <input
+					type="hidden" name="page" value="${page}" />
+
+				<!-- 추가 -->
+				<table class="table table-striped"
+					style="text-align: center; border: 1px solid #dddddd">
+					<tr>
+						<%-- 
+						<td style="border-bottom: none;"><br />${user.id}</td> --%>
+						<td><input type="text" style="height: 4.5rem;"
+							class="form-control" name="content"
+							placeholder="상대방을 존중하는 댓글을 남깁시다." name="commentText"></td>
+						<td><input type="submit" class="btn btn-primary pull"
+							value="댓글 작성"></td>
+					</tr>
+					<tr>
+						<td colspan="3"><input name="file" type="file" id="file"
+							accept="image/*" /></td>
+					</tr>
+				</table>
+			</form>
+		</div>
 	</div>
 
 </body>
