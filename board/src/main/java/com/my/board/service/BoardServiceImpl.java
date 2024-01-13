@@ -3,6 +3,7 @@ package com.my.board.service;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,12 +46,38 @@ public class BoardServiceImpl implements BoardService {
 		int row = (pageInfo.getCurPage() - 1) * 10 + 1;
 		return boardDao.selectBoardList(row - 1);
 	}
-	
+
 	@Override
-	public List<Reply> replyListByPage(Integer num) throws Exception {
-	    List<Reply> replyList = replyDao.selectReplyList(num);
-	    
-	    return replyList;
+	public List<Reply> replyListByPage(Integer num, PageInfo pageInfo) {
+		try {
+			Map<String, Object> param = new HashMap<>();
+			param.put("num", num);
+			int replyCount = replyDao.selectReplyCount(num);
+
+			if (replyCount == 0) {
+				// 댓글이 없는 경우 빈 리스트를 반환
+				return Collections.emptyList();
+			}
+
+			int allPage = (int) Math.ceil((double) replyCount / 10);
+			int startPage = (pageInfo.getCurPage() - 1) / 10 * 10 + 1;
+			int endPage = Math.min(startPage + 10 - 1, allPage);
+			pageInfo.setAllPage(allPage);
+			pageInfo.setStartPage(startPage);
+			pageInfo.setEndPage(endPage);
+
+			if (pageInfo.getCurPage() > allPage) {
+				pageInfo.setCurPage(allPage);
+			}
+
+			int row = (pageInfo.getCurPage() - 1) * 10 + 1;
+			param.put("row", row - 1);
+			return replyDao.selectReplyList(param);
+		} catch (Exception e) {
+			// 예외가 발생한 경우 로깅하고 빈 리스트를 반환
+			e.printStackTrace();
+			return Collections.emptyList();
+		}
 	}
 
 	@Override
@@ -113,14 +140,13 @@ public class BoardServiceImpl implements BoardService {
 			file.transferTo(uploadFile); // 이 2줄이 파일업로드
 			reply.setFileurl(num + "");
 		}
-		Integer num = reply.getNum();
-		replyDao.insertReply(reply); // 댓글 저장;
-		List<Reply> replyList = replyDao.selectReplyList(num);
-	    if (!replyList.isEmpty()) {
-	        return replyList.get(replyList.size() - 1);
-	    } else {
-	        return null;
-	    }
+	    Integer num = reply.getNum();
+	    replyDao.insertReply(reply);
+
+	    // 댓글 저장 후 바로 해당 댓글을 조회하고 반환
+	    Reply writereply = replyDao.selectReply(num);
+	    
+	    return writereply;
 	}
 
 	@Override
@@ -142,8 +168,6 @@ public class BoardServiceImpl implements BoardService {
 		boardDao.updateBoardViewCount(num);
 		return boardDao.selectBoard(num);
 	}
-
-
 
 	@Override
 	public Board modifyBoard(Board board, MultipartFile file) throws Exception {
@@ -193,17 +217,18 @@ public class BoardServiceImpl implements BoardService {
 			boardDao.deleteBoard(num);
 		}
 	}
-	
+
 	@Override
 	public void removeReply(Integer renum) throws Exception {
-		Reply reply= replyDao.selectReply(renum);
-		if(reply!=null) {
-			if(reply.getFileurl() !=null) {
+		Reply reply = replyDao.selectReply(renum);
+		if (reply != null) {
+			if (reply.getFileurl() != null) {
 				replyDao.deleteFile(Integer.parseInt(reply.getFileurl()));
 			}
 			replyDao.deleteReply(renum);
 		}
 	}
+
 	@Override
 	public Boolean isBoardLike(String userId, Integer boardNum) throws Exception {
 		Map<String, Object> param = new HashMap<>();
@@ -229,7 +254,5 @@ public class BoardServiceImpl implements BoardService {
 			return false;
 		}
 	}
-
-
 
 }

@@ -1,6 +1,7 @@
 package com.my.board.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,8 @@ public class ReplyDaoImpl implements ReplyDao {
 	}
 
 	@Override
-	public List<Reply> selectReplyList(Integer num) throws Exception {
-		return sqlSession.selectList("mapper.reply.selectReplyList", num);
+	public List<Reply> selectReplyList(Map<String, Object> param) throws Exception {
+		return sqlSession.selectList("mapper.reply.selectReplyList", param);
 	}
 
 	@Override
@@ -29,10 +30,9 @@ public class ReplyDaoImpl implements ReplyDao {
 		return sqlSession.selectOne("mapper.reply.selectReply", renum);
 	}
 
-
 	@Override
-	public Integer selectReplyCount() throws Exception {
-		return sqlSession.selectOne("mapper.reply.selectReplyCount");
+	public Integer selectReplyCount(Integer num) throws Exception {
+		return sqlSession.selectOne("mapper.reply.selectReplyCount", num);
 	}
 
 	@Override
@@ -46,6 +46,5 @@ public class ReplyDaoImpl implements ReplyDao {
 		sqlSession.delete("mapper.reply.deleteFile", num);
 
 	}
-
 
 }

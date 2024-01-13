@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.reply">
+
+
+	<insert id="insertReply" parameterType="Reply"
+		useGeneratedKeys="true" keyProperty="renum">
+	
+	<![CDATA[
+	insert into reply (content,num,writedate, fileurl, writer) 
+	values (#{content},#{num},curdate(),#{fileurl},#{writer})
+	]]>
+	</insert>
+
+
+	<select id="selectReplyCount" parameterType="Integer"
+		resultType="Integer">
+		<![CDATA[
+			select count(*) from reply where num=#{num}
+		]]>
+	</select>
+<!-- 	<select id="selectReplyListCount" parameterType="Integer"
+		resultType="Integer">
+		<![CDATA[
+			select count(*) from reply where num=#{num}
+		]]>
+	</select> -->
+	<select id="selectReply" parameterType="Integer"
+		resultType="Reply">
+		<![CDATA[
+			select * from reply where renum=#{renum}
+		]]>
+
+	</select>
+	<select id="selectReplyList" parameterType="hashmap"
+		resultType="Reply">
+	<![CDATA[
+        select * from reply
+        WHERE num = #{num}
+        ORDER BY renum =#{order} 
+        LIMIT #{row}, 10
+    ]]>
+	</select>
+<!-- 	<select id="selectReplyLists" parameterType="Integer"
+		resultType="Reply"> 
+		<![CDATA[ select * from reply where num = #{num} order by renum desc]]>
+	</select> -->
+	<delete id="deleteReply" parameterType="Integer"> 
+	<![CDATA[ 
+	delete from reply where renum=#{renum} 
+	]]>
+	</delete>
+	<select id="selectFile" parameterType="Integer"
+		resultType="FileVo">
+			<![CDATA[
+			select * from file where num=#{num}
+		]]>
+	</select>
+	<delete id="deleteFile" parameterType="Integer">
+			<![CDATA[
+			delete from file where num=#{num}
+		]]>
+	</delete>
+</mapper>

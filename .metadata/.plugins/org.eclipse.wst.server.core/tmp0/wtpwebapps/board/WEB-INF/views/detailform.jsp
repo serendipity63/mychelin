@@ -145,7 +145,7 @@
 	<div class="container" id="./writeForm">
 		<div class="row">
 			<input type="hidden" name="writer" value="${user.id }" />
-			<table class="table table-striped"
+			<table class="table"
 				style="text-align: center; border: 1px solid #dddddd">
 				<thead>
 					<tr>
@@ -256,10 +256,9 @@
 				<c:choose>
 					<c:when test="${pageInfo.curPage > 1}">
 						<li><a
-							href="${contextPath}/boardlist?page=${pageInfo.curPage-1}"
+							href="${contextPath}/boarddetail/${board.num}/${pageInfo.curPage-1}"
 							onclick="return callBtn(${pageInfo.curPage-1});"
-							aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
-						</a></li>
+							aria-label="Previous"> <span aria-hidden="true">&laquo;</span></a></li>
 					</c:when>
 					<c:otherwise>
 						<li class="disabled"><span aria-hidden="true">&laquo;</span>
@@ -270,21 +269,19 @@
 				<c:forEach begin="${pageInfo.startPage}" end="${pageInfo.endPage}"
 					var="i">
 					<li class="${pageInfo.curPage == i ? 'active' : ''}"><a
-						href="${contextPath}/boardlist?page=${i}"
+						href="${contextPath}/boarddetail/${board.num}/${i}"
 						onclick="return callBtn(${i});">${i}</a></li>
 				</c:forEach>
 
 				<c:choose>
 					<c:when test="${pageInfo.curPage < pageInfo.allPage}">
 						<li><a
-							href="${contextPath}/boardlist?page=${pageInfo.curPage+1}"
+							href="${contextPath}/boarddetail/${board.num}/${pageInfo.curPage+1}"
 							onclick="return callBtn(${pageInfo.curPage+1});"
-							aria-label="Next"> <span aria-hidden="true">&raquo;</span>
-						</a></li>
+							aria-label="Next"> <span aria-hidden="true">&raquo;</span></a></li>
 					</c:when>
 					<c:otherwise>
-						<li class="disabled"><span aria-hidden="true">&raquo;</span>
-						</li>
+						<li class="disabled"><span aria-hidden="true">&raquo;</span></li>
 					</c:otherwise>
 				</c:choose>
 			</ul>

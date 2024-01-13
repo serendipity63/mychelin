@@ -3,9 +3,7 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="mapper.reply">
-	<!-- <select id="selectreplyList" parameterType="Integer" resultType="Reply"> 
-		<![CDATA[ select * from reply where num = #{num} order by renum desc limit 
-		#{row},10 ]]> </select> -->
+
 
 	<insert id="insertReply" parameterType="Reply"
 		useGeneratedKeys="true" keyProperty="renum">
@@ -23,6 +21,12 @@
 			select count(*) from reply where num=#{num}
 		]]>
 	</select>
+<!-- 	<select id="selectReplyListCount" parameterType="Integer"
+		resultType="Integer">
+		<![CDATA[
+			select count(*) from reply where num=#{num}
+		]]>
+	</select> -->
 	<select id="selectReply" parameterType="Integer"
 		resultType="Reply">
 		<![CDATA[
@@ -30,13 +34,18 @@
 		]]>
 
 	</select>
-	<select id="selectReplyList" parameterType="Integer"
+	<select id="selectReplyList" parameterType="hashmap"
 		resultType="Reply">
-		<![CDATA[
-			select * from reply where num=#{num}
-		]]>
+	<![CDATA[
+        select * from reply
+        WHERE num = #{num}
+        LIMIT #{row}, 10
+    ]]>
 	</select>
-
+<!-- 	<select id="selectReplyLists" parameterType="Integer"
+		resultType="Reply"> 
+		<![CDATA[ select * from reply where num = #{num} order by renum desc]]>
+	</select> -->
 	<delete id="deleteReply" parameterType="Integer"> 
 	<![CDATA[ 
 	delete from reply where renum=#{renum} 

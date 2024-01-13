@@ -12,7 +12,7 @@ import com.my.board.dto.PageInfo;
 public interface BoardService {
 
 	List<Board> boardListByPage(PageInfo pageInfo) throws Exception;
-	List<Reply> replyListByPage(Integer num) throws Exception;
+	List<Reply> replyListByPage(Integer num, PageInfo pageInfo) throws Exception;
 	
 	Board writeBoard(Board board, MultipartFile file) throws Exception;
 	

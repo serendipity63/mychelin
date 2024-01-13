@@ -42,23 +42,6 @@ public class BoardController {
 		return "main";
 	}
 
-	@RequestMapping(value = "/boardlist", method = RequestMethod.GET)
-	public ModelAndView boardlist(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
-		ModelAndView mav = new ModelAndView();
-		try {
-			PageInfo pageInfo = new PageInfo();
-			pageInfo.setCurPage(page);
-			List<Board> boardList = boardService.boardListByPage(pageInfo);
-			mav.addObject("pageInfo", pageInfo);
-			mav.addObject("boardList", boardList);
-			mav.setViewName("boardlist");
-		} catch (Exception e) {
-			e.printStackTrace();
-			mav.setViewName("error");
-		}
-		return mav;
-	}
-
 	@RequestMapping(value = "/boardwrite", method = RequestMethod.GET)
 	public String boardWrite() {
 		return "writeform";
@@ -126,14 +109,34 @@ public class BoardController {
 		}
 	}
 
+	@RequestMapping(value = "/boardlist", method = RequestMethod.GET)
+	public ModelAndView boardlist(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
+		ModelAndView mav = new ModelAndView();
+		try {
+			PageInfo pageInfo = new PageInfo();
+			pageInfo.setCurPage(page);
+			List<Board> boardList = boardService.boardListByPage(pageInfo);
+			mav.addObject("pageInfo", pageInfo);
+			mav.addObject("boardList", boardList);
+			mav.setViewName("boardlist");
+		} catch (Exception e) {
+			e.printStackTrace();
+			mav.setViewName("error");
+		}
+		return mav;
+	}
+
 	@RequestMapping(value = "/boarddetail/{num}/{page}", method = RequestMethod.GET)
 	public ModelAndView boardDetail(@PathVariable Integer num, @PathVariable Integer page) {
 		ModelAndView mav = new ModelAndView();
 		try {
+			PageInfo pageInfo = new PageInfo();
+	        pageInfo.setCurPage(page); // 현재 페이지 설정
 			Board board = boardService.boardDetail(num);
-			List<Reply> replyList = boardService.replyListByPage(num);
+			List<Reply> replyList = boardService.replyListByPage(num, pageInfo);
+			System.out.println(replyList);
 			mav.addObject("board", board);
-			mav.addObject("page", page);
+			mav.addObject("pageInfo", pageInfo);
 			mav.addObject("replyList", replyList);
 			Member user = (Member) session.getAttribute("user");
 			if (user != null) {
@@ -175,23 +178,21 @@ public class BoardController {
 			return "error";
 		}
 	}
-	
-	
+
 	@RequestMapping(value = "/reply/delete/{renum}", method = RequestMethod.GET)
 	@ResponseBody
 	public String replyDelete(@PathVariable Integer renum) {
 		try {
-			boardService.removeReply(renum); 
-	        System.out.println("댓글 삭제 성공: " + renum);
+			boardService.removeReply(renum);
+			System.out.println("댓글 삭제 성공: " + renum);
 			return "success";
 		} catch (Exception e) {
 			e.printStackTrace();
-	        System.out.println("댓글 삭제 실패: " + e.getMessage());
+			System.out.println("댓글 삭제 실패: " + e.getMessage());
 			return "error";
 		}
 	}
 
-	
 	@RequestMapping(value = "/like", method = RequestMethod.POST)
 	@ResponseBody // 반환되는게 data
 	public String boardLike(@RequestParam("num") Integer num) {
