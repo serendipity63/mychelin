@@ -45,6 +45,13 @@ public class BoardServiceImpl implements BoardService {
 		int row = (pageInfo.getCurPage() - 1) * 10 + 1;
 		return boardDao.selectBoardList(row - 1);
 	}
+	
+	@Override
+	public List<Reply> replyListByPage(Integer num) throws Exception {
+	    List<Reply> replyList = replyDao.selectReplyList(num);
+	    
+	    return replyList;
+	}
 
 	@Override
 	public List<Board> boardSearchListByPage(String type, String keyword, PageInfo pageInfo) throws Exception {
@@ -136,19 +143,7 @@ public class BoardServiceImpl implements BoardService {
 		return boardDao.selectBoard(num);
 	}
 
-	@Override
-	public List<Reply> replyListByPage(Integer num) throws Exception {
-	    List<Reply> replyList = replyDao.selectReplyList(num);
-	    
-	    // 추가: replyList가 비어있는지, 목록이 정상적으로 로드되었는지 확인하는 로그
-	    if (replyList.isEmpty()) {
-	        System.out.println("No replies found for board with num: " + num);
-	    } else {
-	        System.out.println("Replies found for board with num " + num + ": " + replyList.size() + " replies");
-	    }
 
-	    return replyList;
-	}
 
 	@Override
 	public Board modifyBoard(Board board, MultipartFile file) throws Exception {
@@ -198,7 +193,17 @@ public class BoardServiceImpl implements BoardService {
 			boardDao.deleteBoard(num);
 		}
 	}
-
+	
+	@Override
+	public void removeReply(Integer renum) throws Exception {
+		Reply reply= replyDao.selectReply(renum);
+		if(reply!=null) {
+			if(reply.getFileurl() !=null) {
+				replyDao.deleteFile(Integer.parseInt(reply.getFileurl()));
+			}
+			replyDao.deleteReply(renum);
+		}
+	}
 	@Override
 	public Boolean isBoardLike(String userId, Integer boardNum) throws Exception {
 		Map<String, Object> param = new HashMap<>();
@@ -224,5 +229,7 @@ public class BoardServiceImpl implements BoardService {
 			return false;
 		}
 	}
+
+
 
 }

@@ -2,11 +2,11 @@ package com.my.board.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,9 +18,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.my.board.dto.Board;
-import com.my.board.dto.Reply;
 import com.my.board.dto.Member;
 import com.my.board.dto.PageInfo;
+import com.my.board.dto.Reply;
 import com.my.board.service.BoardService;
 
 /**
@@ -47,7 +47,6 @@ public class BoardController {
 		ModelAndView mav = new ModelAndView();
 		try {
 			PageInfo pageInfo = new PageInfo();
-			System.out.println(page);
 			pageInfo.setCurPage(page);
 			List<Board> boardList = boardService.boardListByPage(pageInfo);
 			mav.addObject("pageInfo", pageInfo);
@@ -81,14 +80,18 @@ public class BoardController {
 	}
 
 	@RequestMapping(value = "/reply", method = RequestMethod.POST)
-	public ModelAndView boardReply(@ModelAttribute Reply reply, @RequestParam("file") MultipartFile file
-			, @RequestParam("page") Integer page) {
+	public ModelAndView boardReply(@ModelAttribute Reply reply, @RequestParam("file") MultipartFile file,
+			@RequestParam("page") Integer page) {
 		ModelAndView mav = new ModelAndView();
+		Member user = (Member) session.getAttribute("user");
+		if (user == null) {
+			mav.setViewName("redirect:/login");
+			return mav;
+		}
 		try {
 			Reply writereply = boardService.writeReply(reply, file);
 			mav.addObject("writereply", writereply);
-			/* mav.setViewName("detailform"); */
-	        mav.setViewName("redirect:/boarddetail/" + reply.getNum() + "/" + page);
+			mav.setViewName("redirect:/boarddetail/" + reply.getNum() + "/" + page);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -130,8 +133,8 @@ public class BoardController {
 			Board board = boardService.boardDetail(num);
 			List<Reply> replyList = boardService.replyListByPage(num);
 			mav.addObject("board", board);
-			mav.addObject("replyList", replyList);
 			mav.addObject("page", page);
+			mav.addObject("replyList", replyList);
 			Member user = (Member) session.getAttribute("user");
 			if (user != null) {
 				Boolean select = boardService.isBoardLike(user.getId(), num);
@@ -172,7 +175,23 @@ public class BoardController {
 			return "error";
 		}
 	}
+	
+	
+	@RequestMapping(value = "/reply/delete/{renum}", method = RequestMethod.GET)
+	@ResponseBody
+	public String replyDelete(@PathVariable Integer renum) {
+		try {
+			boardService.removeReply(renum); 
+	        System.out.println("댓글 삭제 성공: " + renum);
+			return "success";
+		} catch (Exception e) {
+			e.printStackTrace();
+	        System.out.println("댓글 삭제 실패: " + e.getMessage());
+			return "error";
+		}
+	}
 
+	
 	@RequestMapping(value = "/like", method = RequestMethod.POST)
 	@ResponseBody // 반환되는게 data
 	public String boardLike(@RequestParam("num") Integer num) {

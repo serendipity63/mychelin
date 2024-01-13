@@ -10,7 +10,12 @@ public interface ReplyDao {
 //	List<Reply> selectReplyList(Integer row) throws Exception;
 	List<Reply> selectReplyList(Integer num) throws Exception;
 
+	Integer selectReplyCount() throws Exception;
 
-	Reply selectReply(Integer num) throws Exception;
+	Reply selectReply(Integer renum) throws Exception;
+
+	void deleteReply(Integer renum) throws Exception;
+	
+	void deleteFile(Integer num) throws Exception;
 
 }

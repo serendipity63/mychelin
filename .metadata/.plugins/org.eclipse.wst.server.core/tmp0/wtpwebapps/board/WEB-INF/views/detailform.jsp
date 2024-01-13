@@ -70,6 +70,29 @@
 		})
 	}
 </script>
+
+
+<script>
+    // JavaScript 함수로 댓글 삭제 및 화면 업데이트 기능 구현
+    function deleteReply(renum) {
+        // Ajax를 사용하여 서버에 댓글 삭제 요청
+        $.ajax({
+            url: '${contextPath}/reply/delete/' + renum,
+            type: 'GET',
+            success: function (data) {
+                // 서버에서 성공적으로 응답받은 경우에만 해당 댓글을 화면에서 제거
+                if (data === 'success') {
+                	  $('#reply_' + renum).remove();
+                	  } else {
+                    console.error('댓글 삭제 실패');
+                }
+            },
+            error: function (error) {
+                console.error('댓글 삭제 실패:', error);
+            }
+        });
+    }
+</script>
 </head>
 <body>
 	<nav class="navbar navbar-default">
@@ -194,47 +217,39 @@
 
 
 	<div class="container">
-		<table class="table table-striped"
+		<table class="table"
 			style="text-align: center; border: 1px solid #dddddd">
 			<thead>
 				<c:forEach var="reply" items="${replyList}">
-					<tr>
-						<td colspan="2" style="text-align: left;"><strong>${reply.writer}</strong>
-							- ${reply.writedate}</td>
-					</tr>
-					<tr>
-						<!-- 댓글 내용 -->
-						<td colspan="2" style="min-height: 200px; text-align: left;">
-							${reply.content}</td>
-					</tr>
-					<tr>
-						<!-- 이미지 표시 -->
-						<td colspan="2" style="min-height: 200px; text-align: left;">
-							<c:choose>
-								<c:when test="${reply.fileurl ne null}">
-									<img src="${contextPath}/image/${reply.fileurl}" width="100px"
-										height="100px" />
-								</c:when>
-							</c:choose>
-						</td>
-
-					</tr>
+					<tbody id="reply_${reply.renum}">
+						<tr>
+							<td colspan="2" style="text-align: left;"><strong>${reply.writer}</strong>
+								- ${reply.writedate} <!-- 수정과 삭제 버튼 추가 --> <c:if
+									test="${user ne null and user.id eq reply.writer}">
+									<a href="${contextPath}/reply/edit/${reply.renum}">수정</a>
+									<a href="javascript:void(0);"
+										onclick="deleteReply(${reply.renum});">삭제</a>
+								</c:if></td>
+						</tr>
+						<tr>
+							<!-- 댓글 내용 -->
+							<td colspan="2" style="min-height: 200px; text-align: left;">
+								${reply.content}</td>
+						</tr>
+						<tr>
+							<!-- 이미지 표시 -->
+							<td colspan="2" style="min-height: 200px; text-align: left;">
+								<c:choose>
+									<c:when test="${reply.fileurl ne null}">
+										<img src="${contextPath}/image/${reply.fileurl}" width="100px"
+											height="100px" />
+									</c:when>
+								</c:choose>
+							</td>
+						</tr>
+					</tbody>
 				</c:forEach>
 			</thead>
-			<%-- 		<tbody>
-				<c:forEach items="${boardList}" var="board">
-					<tr id="tr_bottom">
-						<td><a
-							href="${contextPath}/boarddetail/${board.num}/${pageInfo.curPage}">${board.subject}</a></td>
-						<td>${board.writer}</td>
-						<td>${board.writedate}</td>
-						<td><c:if test="${user.id == reply.writer}">
-								<a
-									href="${contextPath}/boarddelete/${board.num}/${pageInfo.curPage}">삭제</a>
-							</c:if></td>
-					</tr>
-				</c:forEach>
-			</tbody> --%>
 		</table>
 		<nav aria-label="Page navigation" style="text-align: center;">
 			<ul class="pagination pagination-sm" style="display: inline-block;">
@@ -286,6 +301,8 @@
 					type="hidden" name="page" value="${page}" />
 
 				<!-- 추가 -->
+				<%-- 						<c:if test="${user ne Empty }">
+ --%>
 				<table class="table table-striped"
 					style="text-align: center; border: 1px solid #dddddd">
 					<tr>
@@ -302,6 +319,7 @@
 							accept="image/*" /></td>
 					</tr>
 				</table>
+				<%-- 	</c:if> --%>
 			</form>
 		</div>
 	</div>

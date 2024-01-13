@@ -17,11 +17,11 @@
 	</insert>
 
 
-	<select id="selectReplyCount" resultType="Integer">
+	<select id="selectReplyCount" parameterType="Integer"
+		resultType="Integer">
 		<![CDATA[
-			select count(*) from reply
+			select count(*) from reply where num=#{num}
 		]]>
-
 	</select>
 	<select id="selectReply" parameterType="Integer"
 		resultType="Reply">
@@ -37,6 +37,20 @@
 		]]>
 	</select>
 
-	<!-- <delete id="deleteBoardLike" parameterType="hashmap"> <![CDATA[ delete 
-		from boardlike where member_id=#{id} and board_num=#{num} ]]> </delete> -->
+	<delete id="deleteReply" parameterType="Integer"> 
+	<![CDATA[ 
+	delete from reply where renum=#{renum} 
+	]]>
+	</delete>
+	<select id="selectFile" parameterType="Integer"
+		resultType="FileVo">
+			<![CDATA[
+			select * from file where num=#{num}
+		]]>
+	</select>
+	<delete id="deleteFile" parameterType="Integer">
+			<![CDATA[
+			delete from file where num=#{num}
+		]]>
+	</delete>
 </mapper>

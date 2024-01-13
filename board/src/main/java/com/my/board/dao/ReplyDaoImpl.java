@@ -19,15 +19,32 @@ public class ReplyDaoImpl implements ReplyDao {
 
 	}
 
-
 	@Override
 	public List<Reply> selectReplyList(Integer num) throws Exception {
 		return sqlSession.selectList("mapper.reply.selectReplyList", num);
 	}
 
 	@Override
-	public Reply selectReply(Integer num) throws Exception {
-		return sqlSession.selectOne("mapper.reply.selectReply", num);
+	public Reply selectReply(Integer renum) throws Exception {
+		return sqlSession.selectOne("mapper.reply.selectReply", renum);
+	}
+
+
+	@Override
+	public Integer selectReplyCount() throws Exception {
+		return sqlSession.selectOne("mapper.reply.selectReplyCount");
+	}
+
+	@Override
+	public void deleteReply(Integer renum) throws Exception {
+		sqlSession.delete("mapper.reply.deleteReply", renum);
+
+	}
+
+	@Override
+	public void deleteFile(Integer num) throws Exception {
+		sqlSession.delete("mapper.reply.deleteFile", num);
+
 	}
 
 
